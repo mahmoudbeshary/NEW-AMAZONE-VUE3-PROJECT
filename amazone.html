@@ -78,8 +78,8 @@
           </div>
     
           <div class="product-quantity-container">
-            <select>
-              <option selected value="1">1</option>
+            <select v-model="product.quantity">
+              <!-- <option selected value="1">1</option> -->
               <option value="2">2</option>
               <option value="3">3</option>
               <option value="4">4</option>
@@ -99,7 +99,7 @@
             Added
           </div>
     
-          <button class="add-to-cart-button button-primary js-add-to-cart"
+          <button @click="addtocart(product.name, product.quantity)" class="add-to-cart-button button-primary js-add-to-cart"
           data-product-id="${product.id}">
             Add to Cart
           </button>
@@ -114,12 +114,17 @@
         data () {
           return {
             inventory: products,
+            cart: {}
           }
         },
         methods: {
           formatCurrency (priceCents) {
   return (priceCents / 100).toFixed(2);
-}
+},
+  addtocart (name, i) {
+    this.cart[name] += this.inventory[i].quantity
+    console.log(this.cart);
+  }
         },
       })
       app.mount('#app')
