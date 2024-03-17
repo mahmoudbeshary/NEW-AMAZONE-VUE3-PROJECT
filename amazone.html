@@ -74,7 +74,7 @@
           </div>
     
           <div class="product-price">
-            <!-- ${{ formatCurrency(product.priceCents) }} -->
+            ${{ formatCurrency(product.priceCents) }}
           </div>
     
           <div class="product-quantity-container">
@@ -115,7 +115,12 @@
           return {
             inventory: products,
           }
-        }
+        },
+        methods: {
+          formatCurrency (priceCents) {
+  return (priceCents / 100).toFixed(2);
+}
+        },
       })
       app.mount('#app')
     </script>
