@@ -1,7 +1,8 @@
 .main {
-  max-width: 1100px;
+  max-width: 2000px;
   padding-left: 30px;
   padding-right: 30px;
+  
 
   margin-top: 140px;
   margin-bottom: 100px;
@@ -14,10 +15,27 @@
   margin-right: auto;
 }
 
+.cart-container
+  {
+    position: fixed;
+    overflow: hidden;
+    background-color: black;
+    color: white;
+    top: 100px;
+    right: 0px;
+    width: 100%;
+
+    /* width: $cartWidth; */
+    /* height: 100%; */
+    z-index: 10000;
+  }
+    
+
+
 .page-title {
   font-weight: 700;
   font-size: 22px;
-  margin-bottom: 18px;
+  margin: 20px;
 }
 
 .checkout-grid {
@@ -54,7 +72,9 @@
 }
 
 .payment-summary {
-  padding-bottom: 5px;
+  padding-bottom: 10px;
+  margin-bottom: 60px;
+  margin-right: 50px;
 }
 
 @media (max-width: 1000px) {
