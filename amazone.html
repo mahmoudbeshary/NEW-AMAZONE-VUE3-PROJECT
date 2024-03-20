@@ -1,36 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Amazon Project</title>
 
-    <!-- This code is needed for responsive design to work.
+<head>
+  <title>Amazon Project</title>
+
+  <!-- This code is needed for responsive design to work.
       (Responsive design = make the website look good on
       smaller screen sizes like a phone or a tablet). -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Load a font called Roboto from Google Fonts. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Load a font called Roboto from Google Fonts. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <!-- Here are the CSS files for this page. -->
-    <link rel="stylesheet" href="styles/shared/general.css">
-    <link rel="stylesheet" href="styles/shared/amazon-header.css">
-    <link rel="stylesheet" href="styles/pages/checkout/checkout.css">
-    <link rel="stylesheet" href="styles/pages/checkout/checkout-header.css">
-    <link rel="stylesheet" href="styles/pages/amazon.css">
-    
-  </head>
-  <body>
-    <!-- test commit -->
-    <div id="app">
+  <!-- Here are the CSS files for this page. -->
+  <link rel="stylesheet" href="styles/shared/general.css">
+  <link rel="stylesheet" href="styles/shared/amazon-header.css">
+  <link rel="stylesheet" href="styles/pages/checkout/checkout.css">
+  <link rel="stylesheet" href="styles/pages/checkout/checkout-header.css">
+  <link rel="stylesheet" href="styles/pages/amazon.css">
+
+</head>
+
+<body>
+  <!-- test commit -->
+  <div id="app">
     <div class="amazon-header">
       <div class="amazon-header-left-section">
         <a href="amazon.html" class="header-link">
-          <img class="amazon-logo"
-            src="images/amazon-logo-white.png">
-          <img class="amazon-mobile-logo"
-            src="images/amazon-mobile-logo-white.png">
+          <img class="amazon-logo" src="images/amazon-logo-white.png">
+          <img class="amazon-mobile-logo" src="images/amazon-mobile-logo-white.png">
         </a>
       </div>
 
@@ -52,39 +52,38 @@
           <img class="cart-icon" src="images/icons/cart-icon.png">
           <div class="js-cart-quantity cart-quantity">3</div>
           <div class="cart-text">Cart</div>
-          
+
         </a>
       </div>
     </div>
-    
+
     <div class="main">
 
       <div class="js-products-grid products-grid">
-        <div v-for="(product, index) in inventory" :key="product.id" class="product-container">
+        <div v-for="(product, i) in inventory" :key="product.id" class="product-container">
           <div class="product-image-container">
-            <img class="product-image"
-              :src="product.image">
+            <img class="product-image" :src="product.image">
           </div>
-    
+
           <div class="product-name limit-text-to-2-lines">
             {{ product.name }}
           </div>
-    
+
           <div class="product-rating-container">
-            <img class="product-rating-stars"
-              :src="'./images/ratings/rating-' + (product.rating.stars * 10) + '.png'">
+            <img class="product-rating-stars" :src="'./images/ratings/rating-' + (product.rating.stars * 10) + '.png'">
             <div class="product-rating-count link-primary">
-              {{ product.rating.count }} 
+              {{ product.rating.count }}
             </div>
           </div>
-    
+
           <div class="product-price">
             ${{ formatCurrency(product.priceCents) }}
           </div>
-    
+
           <div class="product-quantity-container">
             <select v-model="product.quantity">
               <!-- <option selected value="1">1</option> -->
+              <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
               <option value="4">4</option>
@@ -93,54 +92,56 @@
               <option value="7">7</option>
               <option value="8">8</option>
               <option value="9">9</option>
-              <option value="10">10</option>
             </select>
           </div>
-    
+
           <div class="product-spacer"></div>
-    
+
           <div class="added-to-cart">
             <img src="images/icons/checkmark.png">
             Added
           </div>
-    
-          <button @click="addtocart(product.name, product.quantity)" class="add-to-cart-button button-primary js-add-to-cart"
-          data-product-id="${product.id}">
+
+          <button @click="addtocart(product.name, i, product.quantity)"
+            class="add-to-cart-button button-primary js-add-to-cart" data-product-id="${product.id}">
             Add to Cart
           </button>
         </div>
       </div>
-    
+
     </div>
-    <sidebar v-if="showsidebar"/>
-    
+    <sidebar v-if="showsidebar" />
+
   </div>
   <script src="./data/products.js"></script>
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <script>
-      let app = Vue.createApp({
-        data () {
-          return {
-            inventory: products,
-            cart: {},
-            showsidebar: false
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <script>
+    let app = Vue.createApp({
+      data() {
+        return {
+          inventory: products,
+          cart: [],
+          showsidebar: false
+        }
+      },
+      methods: {
+        formatCurrency(priceCents) {
+          return (priceCents / 100).toFixed(2);
+        },
+        addtocart(name, i, quantity) {
+          if (!this.cart[i]) {
+            this.cart[i] = { name: name, quantity: 0 };
           }
+          this.cart[i].quantity += quantity;
+          console.log(this.cart);
         },
-        methods: {
-          formatCurrency (priceCents) {
-  return (priceCents / 100).toFixed(2);
-},
-  addtocart (name, i) {
-    this.cart[name] += this.inventory[i].quantity
-    console.log(this.cart);
-  },
-  togglesidebar () {
-    this.showsidebar = !this.showsidebar
-  }
-        },
-      })
-      app.component('sidebar', {
-        template: `
+        togglesidebar() {
+          this.showsidebar = !this.showsidebar
+        }
+      },
+    })
+    app.component('sidebar', {
+      template: `
         
         <div class="cart-container">
       <div class="page-title">Review your order</div>
@@ -190,10 +191,11 @@
     </div>
   
         `
-      })
-      app.mount('#app')
-     
-    </script>
+    })
+    app.mount('#app')
 
-  </body>
+  </script>
+
+</body>
+
 </html>
