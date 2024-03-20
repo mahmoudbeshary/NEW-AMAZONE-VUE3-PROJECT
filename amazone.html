@@ -130,9 +130,15 @@
         },
         addtocart(productId, i, quantity) {
           if (!this.cart[i]) {
-            this.cart[i] = { productId: productId, quantity: 0 };
+            this.cart[i] = { productId, quantity };
           }
-          this.cart[i].quantity += quantity;
+          // debugger;
+          if (this.cart[i].productId === productId) {
+
+            this.cart[i].quantity = quantity;
+          } else {
+            this.cart[i] = { productId, quantity };
+          }
           console.log(this.cart);
         },
         togglesidebar() {
