@@ -17,13 +17,14 @@
 
 .cart-container
   {
-    position: fixed;
+    position: absolute;
     overflow: hidden;
     background-color: black;
     color: white;
     top: 100px;
     right: 0px;
     width: 100%;
+    min-height: 500px;
 
     /* width: $cartWidth; */
     /* height: 100%; */
