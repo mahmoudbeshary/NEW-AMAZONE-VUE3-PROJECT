@@ -50,7 +50,7 @@
 
         <a @click.prevent="togglesidebar" class="cart-link header-link" href="checkout.html">
           <img class="cart-icon" src="images/icons/cart-icon.png">
-          <div class="js-cart-quantity cart-quantity">3</div>
+          <div class="js-cart-quantity cart-quantity">{{ cartQuantity }}</div>
           <div class="cart-text">Cart</div>
 
         </a>
@@ -102,7 +102,7 @@
             Added
           </div>
 
-          <button @click="addtocart(product.id, i, product.quantity)"
+          <button @click="addtocart(product.id, product.quantity)"
             class="add-to-cart-button button-primary js-add-to-cart" data-product-id="${product.id}">
             Add to Cart
           </button>
@@ -128,16 +128,16 @@
         formatCurrency(priceCents) {
           return (priceCents / 100).toFixed(2);
         },
-        addtocart(productId, i, quantity) {
-          if (!this.cart[i]) {
-            this.cart[i] = { productId, quantity };
-          }
+        addtocart(productId, quantity) {
           // debugger;
-          if (this.cart[i].productId === productId) {
-
-            this.cart[i].quantity = quantity;
+          
+          const matchingItem =  this.cart.find((cartItem) => {
+          return cartItem.productId === productId
+          })
+          if (matchingItem) {
+            matchingItem.quantity += quantity
           } else {
-            this.cart[i] = { productId, quantity };
+            this.cart.push({ productId: productId, quantity: quantity })
           }
           console.log(this.cart);
         },
@@ -145,6 +145,18 @@
           this.showsidebar = !this.showsidebar
         }
       },
+      computed: {
+        cartQuantity() {
+          let cartQuantity = 0;
+          this.cart.forEach((cartItem) => {
+
+            cartQuantity += cartItem.quantity;
+            // console.log(cartQuantity)
+
+          })
+          return cartQuantity
+        }
+      }
     })
     app.component('sidebar', {
       template: `
