@@ -20,12 +20,17 @@
   <link rel="stylesheet" href="styles/pages/checkout/checkout.css">
   <link rel="stylesheet" href="styles/pages/checkout/checkout-header.css">
   <link rel="stylesheet" href="styles/pages/amazon.css">
+<style>
 
+  [v-cloak] {
+    display: none;
+  }
+</style>
 </head>
 
 <body>
   <!-- test commit -->
-  <div id="app">
+  <div id="app" v-cloak>
     <div class="amazon-header">
       <div class="amazon-header-left-section">
         <a href="amazon.html" class="header-link">
@@ -102,7 +107,7 @@
             Added
           </div>
 
-          <button @click="addtocart(product.id, product.quantity)"
+          <button @click="addtocart(product.id, product.quantity = 1)"
             class="add-to-cart-button button-primary js-add-to-cart" data-product-id="${product.id}">
             Add to Cart
           </button>
@@ -110,11 +115,7 @@
       </div>
 
     </div>
-    <sidebar
-     v-if="showsidebar"
-     :cart= "cart"
-     :inventory= "inventory"
-     :currencyformat= "formatCurrency" />
+    <sidebar v-if="showsidebar" :cart="cart" :inventory="inventory" :currencyformat="formatCurrency" />
 
   </div>
   <script src="./data/products.js"></script>
@@ -134,8 +135,8 @@
         },
         addtocart(productId, quantity) {
           // debugger;
-          const matchingItem =  this.cart.find((cartItem) => {
-          return cartItem.productId === productId
+          const matchingItem = this.cart.find((cartItem) => {
+            return cartItem.productId === productId
           })
           if (matchingItem) {
             matchingItem.quantity += quantity
@@ -160,22 +161,22 @@
       }
     })
     app.component('sidebar', {
-      props:['cart', 'inventory', 'currencyformat'],
-      data () {
+      props: ['cart', 'inventory', 'currencyformat'],
+      data() {
         return {
           matchingproducts: []
         };
       },
-      async mounted() {
-      await this.cart.forEach((cartItem) => {
+      mounted() {
+        this.cart.forEach((cartItem) => {
           const productId = cartItem.productId
           const matchingproduct = this.inventory.find((product) => {
-          return product.id === productId
+            return product.id === productId
           })
           if (matchingproduct) {
             this.matchingproducts.push(matchingproduct)
           }
-          
+
         })
       },
       template: `  
