@@ -20,12 +20,11 @@
   <link rel="stylesheet" href="styles/pages/checkout/checkout.css">
   <link rel="stylesheet" href="styles/pages/checkout/checkout-header.css">
   <link rel="stylesheet" href="styles/pages/amazon.css">
-<style>
-
-  [v-cloak] {
-    display: none;
-  }
-</style>
+  <style>
+    [v-cloak] {
+      display: none;
+    }
+  </style>
 </head>
 
 <body>
@@ -86,7 +85,7 @@
           </div>
 
           <div class="product-quantity-container">
-            <select v-model.number="product.quantity">
+            <select v-model.number="product.quantity" @change="">
               <!-- <option selected value="1">1</option> -->
               <option value="1">1</option>
               <option value="2">2</option>
@@ -107,7 +106,7 @@
             Added
           </div>
 
-          <button @click="addtocart(product.id, product.quantity = 1)"
+          <button @click="addtocart(product.id, product.quantity)"
             class="add-to-cart-button button-primary js-add-to-cart" data-product-id="${product.id}">
             Add to Cart
           </button>
@@ -135,19 +134,19 @@
         },
         addtocart(productId, quantity) {
           // debugger;
+          if (!quantity) quantity = 1;
           const matchingItem = this.cart.find((cartItem) => {
             return cartItem.productId === productId
           })
           if (matchingItem) {
             matchingItem.quantity += quantity
           } else {
-            this.cart.push({ productId: productId, quantity: quantity })
+            this.cart.push({ productId, quantity })
           }
-          console.log(this.cart);
         },
         togglesidebar() {
           this.showsidebar = !this.showsidebar
-        }
+        },
       },
       computed: {
         cartQuantity() {
@@ -168,15 +167,18 @@
         };
       },
       mounted() {
+        console.log(this.cart);
         this.cart.forEach((cartItem) => {
           const productId = cartItem.productId
           const matchingproduct = this.inventory.find((product) => {
             return product.id === productId
           })
           if (matchingproduct) {
+            matchingproduct.quantity = cartItem.quantity
             this.matchingproducts.push(matchingproduct)
           }
 
+          console.log(matchingproduct);
         })
       },
       template: `  
