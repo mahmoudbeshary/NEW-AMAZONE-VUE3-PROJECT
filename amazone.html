@@ -181,6 +181,17 @@
           console.log(matchingproduct);
         })
       },
+      methods: {
+        removefromcart (productId) {
+          const newarray = [];
+          this.matchingproducts.forEach((product)=> {
+            if(product.id !== productId) {
+              newarray.push(product)
+            }
+          })
+          this.matchingproducts = newarray
+        }
+      },
       template: `  
         <div class="cart-container">
       <div class="page-title">Review your order</div>
@@ -209,7 +220,7 @@
             <span class="update-quantity-link link-primary">
               Update
             </span>
-            <span class="js-delete-link delete-quantity-link link-primary" data-product-id="e43638ce-6aa0-4b85-b27f-e1d07eb678c6">
+            <span class="js-delete-link delete-quantity-link link-primary" data-product-id="e43638ce-6aa0-4b85-b27f-e1d07eb678c6" @click="removefromcart(product.id)">
               Delete
             </span>
           </div>
