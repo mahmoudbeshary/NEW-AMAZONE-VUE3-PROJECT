@@ -64,7 +64,7 @@
     <div class="main">
 
       <div class="js-products-grid products-grid">
-        <div v-for="(product, i) in inventory" :key="product.id" class="product-container">
+        <div v-for="(product, i) in products" :key="product.id" class="product-container">
           <div class="product-image-container">
             <img class="product-image" :src="product.image">
           </div>
@@ -106,86 +106,96 @@
             Added
           </div>
 
-          <button @click="addtocart(product.id, product.quantity)"
-            class="add-to-cart-button button-primary js-add-to-cart" data-product-id="${product.id}">
+          <button @click="addtocart(product.id)"
+            class="add-to-cart-button button-primary js-add-to-cart">
             Add to Cart
           </button>
         </div>
       </div>
 
     </div>
-    <sidebar v-if="showsidebar" :cart="cart" :inventory="inventory" :currencyformat="formatCurrency" />
+    <sidebar v-if="showsidebar" :cart="cart" :currencyformat="formatCurrency" />
 
   </div>
+  <script src="./data/deliveryOption.js"></script>
   <script src="./data/products.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <script>
     let app = Vue.createApp({
       data() {
         return {
-          inventory: products,
-          cart: [],
-          showsidebar: false
+          products,
+          cart: [
+          {
+    productId: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
+    quantity: 2,
+    deliveryOptionId: '1'
+  }, {
+    productId: '15b6fc6f-327a-4ec4-896f-486349e85a3d',
+    quantity: 1,
+    deliveryOptionId: '2'
+  }
+          ],
+          showsidebar: false,
         }
+
       },
       methods: {
         formatCurrency(priceCents) {
           return (priceCents / 100).toFixed(2);
         },
-        addtocart(productId, quantity) {
+        addtocart(productId) {
           // debugger;
-          if (!quantity) quantity = 1;
+
           const matchingItem = this.cart.find((cartItem) => {
             return cartItem.productId === productId
           })
           if (matchingItem) {
-            matchingItem.quantity += quantity
+            matchingItem.quantity += 1
           } else {
-            this.cart.push({ productId, quantity })
+            this.cart.push({ productId, quantity: 1, deliveryOptionId: '1' })
           }
         },
         togglesidebar() {
           this.showsidebar = !this.showsidebar
         },
+        
       },
       computed: {
         cartQuantity() {
           let cartQuantity = 0;
           this.cart.forEach((cartItem) => {
             cartQuantity += cartItem.quantity;
-            // console.log(cartQuantity)
           })
           return cartQuantity
         }
       }
     })
     app.component('sidebar', {
-      props: ['cart', 'inventory', 'currencyformat'],
+      props: ['cart','currencyformat'],
       data() {
         return {
-          matchingproducts: []
+          matchingproducts: [],
         };
       },
       mounted() {
-        console.log(this.cart);
         this.cart.forEach((cartItem) => {
           const productId = cartItem.productId
-          const matchingproduct = this.inventory.find((product) => {
+          const matchingproduct = products.find((product) => {
             return product.id === productId
           })
           if (matchingproduct) {
             matchingproduct.quantity = cartItem.quantity
             this.matchingproducts.push(matchingproduct)
           }
-
-          console.log(matchingproduct);
-        })
+        });
+        
       },
       methods: {
-        removefromcart (productId) {
+        removefromcart(productId) {
           const newarray = [];
-          this.matchingproducts.forEach((product)=> {
-            if(product.id !== productId) {
+          this.matchingproducts.forEach((product) => {
+            if (product.id !== productId) {
               newarray.push(product)
             }
           })
@@ -200,9 +210,8 @@
         <div class="js-order-summary order-summary">
           <div v-for="product in matchingproducts" :key="product.id" class="cart-item-container js-cart-item-container-e43638ce-6aa0-4b85-b27f-e1d07eb678c6">
       <div class="delivery-date">
-        Delivery date: Tuesday, June 21
+        Delivery date: 
       </div>
-    
       <div class="cart-item-details-grid">
         <img class="product-image" :src="product.image">
     
@@ -225,44 +234,13 @@
             </span>
           </div>
         </div>
-    
         <div class="delivery-options">
           <div class="delivery-options-title">
             Choose a delivery option:
           </div>
-          <div class="delivery-option">
-            <input type="radio" checked="" class="delivery-option-input" name="delivery-option-1">
-            <div>
-              <div class="delivery-option-date">
-                Tuesday, June 21
-              </div>
-              <div class="delivery-option-price">
-                FREE Shipping
-              </div>
-            </div>
-          </div>
-          <div class="delivery-option">
-            <input type="radio" class="delivery-option-input" name="delivery-option-1">
-            <div>
-              <div class="delivery-option-date">
-                Wednesday, June 15
-              </div>
-              <div class="delivery-option-price">
-                $4.99 - Shipping
-              </div>
-            </div>
-          </div>
-          <div class="delivery-option">
-            <input type="radio" class="delivery-option-input" name="delivery-option-1">
-            <div>
-              <div class="delivery-option-date">
-                Monday, June 13
-              </div>
-              <div class="delivery-option-price">
-                $9.99 - Shipping
-              </div>
-            </div>
-          </div>
+          
+          
+          
         </div>
       </div>
     </div>          
@@ -309,6 +287,7 @@
   
         `
     })
+  
     app.mount('#app')
 
   </script>
