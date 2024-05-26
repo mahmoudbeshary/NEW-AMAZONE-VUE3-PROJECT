@@ -106,8 +106,7 @@
             Added
           </div>
 
-          <button @click="addtocart(product.id)"
-            class="add-to-cart-button button-primary js-add-to-cart">
+          <button @click="addtocart(product.id)" class="add-to-cart-button button-primary js-add-to-cart">
             Add to Cart
           </button>
         </div>
@@ -117,6 +116,7 @@
     <sidebar v-if="showsidebar" :cart="cart" :currencyformat="formatCurrency" />
 
   </div>
+  <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
   <script src="./data/deliveryOption.js"></script>
   <script src="./data/products.js"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
@@ -126,15 +126,15 @@
         return {
           products,
           cart: [
-          {
-    productId: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
-    quantity: 2,
-    deliveryOptionId: '1'
-  }, {
-    productId: '15b6fc6f-327a-4ec4-896f-486349e85a3d',
-    quantity: 1,
-    deliveryOptionId: '2'
-  }
+            {
+              productId: 'e43638ce-6aa0-4b85-b27f-e1d07eb678c6',
+              quantity: 2,
+              deliveryOptionId: '1'
+            }, {
+              productId: '15b6fc6f-327a-4ec4-896f-486349e85a3d',
+              quantity: 1,
+              deliveryOptionId: '2'
+            }
           ],
           showsidebar: false,
         }
@@ -159,7 +159,6 @@
         togglesidebar() {
           this.showsidebar = !this.showsidebar
         },
-        
       },
       computed: {
         cartQuantity() {
@@ -172,10 +171,11 @@
       }
     })
     app.component('sidebar', {
-      props: ['cart','currencyformat'],
+      props: ['cart', 'currencyformat'],
       data() {
         return {
           matchingproducts: [],
+          deliveryOptions,
         };
       },
       mounted() {
@@ -186,10 +186,11 @@
           })
           if (matchingproduct) {
             matchingproduct.quantity = cartItem.quantity
+            matchingproduct.deliveryOptionId = cartItem.deliveryOptionId
             this.matchingproducts.push(matchingproduct)
           }
         });
-        
+
       },
       methods: {
         removefromcart(productId) {
@@ -200,7 +201,25 @@
             }
           })
           this.matchingproducts = newarray
-        }
+        },
+        dateStringHTML(deliveryOption) {
+          let dateString;
+          const today = dayjs();
+          const deliveryDate = today.add(deliveryOption.deliveryDays, "days");
+          dateString = deliveryDate.format("dddd, MMMM D");
+          return dateString;
+        },
+        priceStringHTML(deliveryOption) {
+          let priceString;
+          priceString =
+            deliveryOption.priceCents === 0
+              ? "FREE"
+              : `$${this.currencyformat(deliveryOption.priceCents)} -`;
+          return priceString;
+        },
+        getdeliveryoption (deliveryOptionId) {
+          return this.deliveryOptions.find(option => option.id === deliveryOptionId)
+        },
       },
       template: `  
         <div class="cart-container">
@@ -210,7 +229,7 @@
         <div class="js-order-summary order-summary">
           <div v-for="product in matchingproducts" :key="product.id" class="cart-item-container js-cart-item-container-e43638ce-6aa0-4b85-b27f-e1d07eb678c6">
       <div class="delivery-date">
-        Delivery date: 
+        Delivery date: {{ this.dateStringHTML(this.getdeliveryoption(product.deliveryOptionId)) }}
       </div>
       <div class="cart-item-details-grid">
         <img class="product-image" :src="product.image">
@@ -239,7 +258,17 @@
             Choose a delivery option:
           </div>
           
-          
+          <div v-for="deliveryOption in deliveryOptions" :key="deliveryOption.id" class="delivery-option js-delivery-option">
+    <input type="radio" :checked="true" class="delivery-option-input" :name="product.id">
+    <div>
+      <div class="delivery-option-date">
+        {{ this.dateStringHTML(deliveryOption) }}
+      </div>
+      <div class="delivery-option-price">
+        {{ this.priceStringHTML(deliveryOption) }}
+      </div>
+    </div>
+  </div>
           
         </div>
       </div>
@@ -287,7 +316,7 @@
   
         `
     })
-  
+
     app.mount('#app')
 
   </script>
